@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Edit Workout</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a, #020617);
+            font-family: 'Segoe UI', sans-serif;
+            color: #e2e8f0;
+        }
+
+        .main-card {
+            max-width: 500px;
+            margin: auto;
+            margin-top: 60px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .title {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #60a5fa;
+        }
+
+        .form-control {
+            background: #020617;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.25);
+            background: #020617;
+            color: #fff;
+        }
+
+        .form-label {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-card">
+
+        <a href="javascript:history.back()" class="back-btn">← Back</a>
+
+        <h3 class="title">Edit Workout</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Exercise</label>
+                <input type="text" name="exercise" value="{{ workout.exercise }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sets</label>
+                <input type="number" name="sets" value="{{ workout.sets }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Reps</label>
+                <input type="number" name="reps" value="{{ workout.reps }}" class="form-control">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" name="weight" value="{{ workout.weight }}" class="form-control">
+            </div>
+
+            <button class="btn btn-primary">Update Workout</button>
+
+        </form>
+
+    </div>
+
+</body>
+</html>

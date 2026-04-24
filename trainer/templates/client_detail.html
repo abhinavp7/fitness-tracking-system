@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+
+    <title>Client Workouts</title>
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        h4, h5 {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(14px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Workout row */
+        .workout-row {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: 0.25s;
+        }
+
+        .workout-row:hover {
+            background: rgba(30, 41, 59, 0.9);
+            transform: scale(1.01);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .btn-dark {
+            background: #334155;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-outline-primary:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-outline-danger {
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-outline-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #334155;
+            border: none;
+        }
+
+        /* Inputs */
+        .form-control {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        small {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>{{ client.username }}'s Workouts</h4>
+            <a href="{% url 'chat' client.id %}" class="btn btn-dark btn-sm">
+                💬 Chat
+            </a>
+        </div>
+
+        <!-- Workout List -->
+        <div class="glass-card">
+            <h5 class="mb-3">Workout List</h5>
+
+            {% for w in workouts %}
+            <div class="workout-row d-flex justify-content-between align-items-center">
+
+                <div>
+                    <strong>{{ w.exercise }}</strong><br>
+                    <small>
+                        {{ w.sets }} × {{ w.reps }} • {{ w.weight }} kg
+                    </small>
+                </div>
+
+                <div>
+                    <a href="{% url 'update_workout_trainer' w.id %}" class="btn btn-sm btn-outline-primary">
+                        Edit
+                    </a>
+                    <a href="{% url 'delete_workout_trainer' w.id %}" class="btn btn-sm btn-outline-danger">
+                        Delete
+                    </a>
+                </div>
+
+            </div>
+
+            {% empty %}
+            <p class="text-muted mb-0">No workouts assigned</p>
+            {% endfor %}
+        </div>
+
+        <!-- Add Workout -->
+        <div class="glass-card">
+            <h5 class="mb-3">Add Workout</h5>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input name="exercise" class="form-control" placeholder="Exercise" required>
+                    </div>
+
+                    <div class="col-md-2">
+                        <input name="sets" type="number" class="form-control" placeholder="Sets" required>
+                    </div>
+
+                    <div class="col-md-2">
+                        <input name="reps" type="number" class="form-control" placeholder="Reps" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <input name="weight" type="number" class="form-control" placeholder="Weight (kg)" required>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100">
+                            Add
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Back -->
+        <div class="text-center mt-3">
+            <a href="{% url 'trainer_dashboard' %}" class="btn btn-secondary">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>
