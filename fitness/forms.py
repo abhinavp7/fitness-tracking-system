@@ -1,0 +1,52 @@
+from django import forms 
+from django.contrib.auth.models import User
+
+from django import forms
+from django.contrib.auth.models import User
+
+class UserRegisterForm(forms.ModelForm):
+    
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control mt-2',
+            'placeholder': 'Confirm Password'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password'] 
+
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control mt-2',
+                'placeholder': 'Username'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control mt-2',
+                'placeholder': 'Email'
+            }),
+            'password': forms.PasswordInput(attrs={
+                'class': 'form-control mt-2',
+                'placeholder': 'Password'
+            }),
+        }
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password:
+            if password != confirm_password:
+                self.add_error('confirm_password', "Passwords do not match")
+
+        return cleaned_data
+        
+class UserLoginForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username','password']
+        widgets={
+            'username':forms.TextInput(attrs={'class':'form-control mt-2','placeholder':'Username'}),
+            'password':forms.TextInput(attrs={'class':'form-control mt-2','placeholder':'password'})
+        }

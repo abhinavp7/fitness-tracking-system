@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background: linear-gradient(135deg, #020617, #0f172a);
+        color: #e2e8f0;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
+
+    /* CARD */
+    .card {
+        background: rgba(30, 41, 59, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        border-radius: 18px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border: none;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        border: none;
+        border-radius: 10px;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border: none;
+        border-radius: 10px;
+    }
+
+    /* TABLE */
+    .table {
+        color: #e2e8f0;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .table thead {
+        background: transparent;
+        color: #94a3b8;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    .table tbody tr {
+        background: rgba(15, 23, 42, 0.7);
+        border-radius: 12px;
+        transition: 0.2s;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(30, 41, 59, 0.9);
+        transform: scale(1.01);
+    }
+
+    .table td, .table th {
+        border: none;
+        padding: 14px;
+    }
+
+    /* INPUTS */
+    .form-control {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px;
+        transition: 0.2s;
+    }
+
+    .form-control::placeholder {
+        color: #64748b;
+    }
+
+    .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 0.15rem rgba(59,130,246,0.3);
+        background: rgba(15, 23, 42, 0.9);
+    }
+
+    /* BADGES */
+    .badge-trainer {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+
+    .badge-none {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+
+    /* HEADINGS */
+    h2, h4, h5 {
+        font-weight: 600;
+        color: #f1f5f9;
+    }
+
+    /* ALERT */
+    .alert {
+        border-radius: 12px;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">{{ request.user }} Dashboard</h3>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+
+    <!-- Alerts -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Trainer Card -->
+    <div class="card p-3 mb-4 shadow">
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+                <small class="text-secondary">Trainer Status</small><br>
+
+                {% if trainer %}
+                    <span class="badge badge-trainer px-3 py-2">
+                        {{ trainer.trainer.username }}
+                    </span>
+                {% else %}
+                    <span class="badge badge-none px-3 py-2">
+                        No Trainer Assigned
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if trainer %}
+                <a href="{% url 'chat' trainer.trainer.id %}" class="btn btn-primary btn-sm">
+                    Chat
+                </a>
+            {% else %}
+                <a href="{% url 'trainer_list' %}" class="btn btn-success btn-sm">
+                    Request Trainer
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Add Workout -->
+    <div class="card p-4 mb-4 shadow">
+        <h5 class="mb-3">Add Workout</h5>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="exercise" class="form-control" placeholder="Exercise" required>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number" name="sets" class="form-control" placeholder="Sets" required>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number" name="reps" class="form-control" placeholder="Reps" required>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="number" name="weight" class="form-control" placeholder="Weight (kg)" required>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Workout List -->
+    <div class="card p-4 shadow">
+        <h5 class="mb-3">Workout History</h5>
+
+        <div class="table-responsive">
+            <table class="table table-borderless align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Exercise</th>
+                        <th>Sets</th>
+                        <th>Reps</th>
+                        <th>Weight</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for w in workout %}
+                    <tr style="background:#0f172a; border-radius:10px;">
+                        <td><strong>{{ w.exercise }}</strong></td>
+                        <td>{{ w.sets }}</td>
+                        <td>{{ w.reps }}</td>
+                        <td>{{ w.weight }} kg</td>
+                        <td>{{ w.date }}</td>
+                        <td class="text-end">
+
+                            <a href="{% url 'workout_demo' w.id %}" class="btn btn-outline-info btn-sm">
+                                Demo
+                            </a>
+
+                            <a href="{% url 'update_workout' w.id %}" class="btn btn-outline-primary btn-sm">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'delete_workout' w.id %}" class="btn btn-outline-danger btn-sm">
+                                Delete
+                            </a>
+
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-secondary">
+                            No workouts added yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

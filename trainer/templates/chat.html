@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+
+    <title>Chat</title>
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chat-container {
+            max-width: 700px;
+            margin: auto;
+            margin-top: 40px;
+        }
+
+        /* Header */
+        .chat-header {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 15px 20px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Chat Box */
+        .chat-box {
+            height: 450px;
+            overflow-y: auto;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 15px;
+            border-left: 1px solid rgba(148,163,184,0.1);
+            border-right: 1px solid rgba(148,163,184,0.1);
+        }
+
+        /* Messages */
+        .message {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .sent {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .received {
+            background: rgba(51, 65, 85, 0.9);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* Input area */
+        .chat-input {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 10px;
+            border-radius: 0 0 16px 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            border-radius: 10px;
+            padding: 0 16px;
+        }
+
+        .btn-send:hover {
+            opacity: 0.9;
+        }
+
+        .btn-back {
+            background: #334155;
+            border: none;
+            border-radius: 10px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- Header -->
+    <div class="chat-header">
+        <h6 class="mb-0">💬 {{ other_user.username }}</h6>
+
+        {% if request.user.is_superuser %}
+        <a href="{% url 'trainer_dashboard' %}" class="btn btn-sm btn-back text-white">
+            Back
+        </a>
+        {% else %}
+        <a href="{% url 'workout' %}" class="btn btn-sm btn-back text-white">
+            Back
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-box" id="chat-box">
+
+        {% for m in messages %}
+            {% if m.sender == request.user %}
+                <div class="message sent">
+                    {{ m.text }}
+                    <div class="timestamp text-end">
+                        {{ m.timestamp|date:"H:i" }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="message received">
+                    <strong>{{ m.sender.username }}</strong><br>
+                    {{ m.text }}
+                    <div class="timestamp">
+                        {{ m.timestamp|date:"H:i" }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <!-- Input -->
+    <form method="post" class="chat-input">
+        {% csrf_token %}
+        <input name="text" class="form-control" placeholder="Type a message..." required>
+        <button type="submit" class="btn btn-send text-white">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </form>
+
+</div>
+
+<script>
+    // Auto-scroll to bottom
+    let chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Auto refresh
+    setTimeout(function () {
+        location.reload();
+    }, 30000);
+</script>
+
+</body>
+</html>
